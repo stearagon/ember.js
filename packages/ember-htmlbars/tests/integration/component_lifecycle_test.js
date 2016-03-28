@@ -127,11 +127,15 @@ styles.forEach(style => {
     owner.register('template:components/the-middle', compile(`<div>Name: {{attrs.name}} ${invoke('the-bottom', { website: string('tomdale.net') })}</div>`));
     owner.register('template:components/the-bottom', compile('<div>Website: {{attrs.website}}</div>'));
 
-    view = EmberView.extend({
+    let viewClass = EmberView.extend({
       [OWNER]: owner,
       template: compile(invoke('the-top', { twitter: 'view.twitter' })),
       twitter: '@tomdale'
-    }).create();
+    });
+
+    expectDeprecation(() => {
+      view = viewClass.create();
+    }, /didInitAttrs is deprecated/);
 
     runAppend(view);
 
@@ -376,6 +380,28 @@ styles.forEach(style => {
     }, /modified inside the didInsertElement hook/);
 
     assert.strictEqual(component.$().text(), '@tomdale');
+
+    run(() => {
+      component.destroy();
+    });
+  });
+
+  QUnit.test('DEPRECATED: didInitAttrs is deprecated', function(assert) {
+    let component;
+
+    let componentClass = style.class.extend({
+      [OWNER]: owner,
+      layout: compile('<div>{{handle}}</div>'),
+      handle: '@wycats',
+
+      didInitAttrs() {
+        this._super(...arguments);
+      }
+    });
+
+    expectDeprecation(() => {
+      component = componentClass.create();
+    }, /didInitAttrs is deprecated/);
 
     run(() => {
       component.destroy();

@@ -636,6 +636,16 @@ export default Mixin.create({
     );
   },
 
+  didInitAttrs() {
+    deprecate(
+      `didInitAttrs is deprecated`,
+      false,
+      { id: 'ember-views.did-init-attrs', until: '3.0.0', url:' /deprecations/v2.x#toc_ember-component-didinitattrs' }
+    );
+
+    this._super(...arguments);
+  },
+
   /*
    This is a special hook implemented in CoreObject, that allows Views/Components
    to have a way to ensure that `init` fires before `didInitAttrs` / `didReceiveAttrs`
